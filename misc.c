@@ -2063,6 +2063,7 @@ argv_assemble(int argc, char **argv)
 	int i, j, ws, r;
 	char c, *ret;
 	struct sshbuf *buf, *arg;
+	size_t buflen;
 
 	if ((buf = sshbuf_new()) == NULL || (arg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
@@ -2098,10 +2099,11 @@ argv_assemble(int argc, char **argv)
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0))
 			fatal_fr(r, "assemble");
 	}
-	if ((ret = malloc(sshbuf_len(buf) + 1)) == NULL)
+	buflen = sshbuf_len(buf);
+	if ((ret = malloc(buflen + 1)) == NULL)
 		fatal_f("malloc failed");
-	memcpy(ret, sshbuf_ptr(buf), sshbuf_len(buf));
-	ret[sshbuf_len(buf)] = '\0';
+	memcpy(ret, sshbuf_ptr(buf), buflen);
+	ret[buflen] = '\0';
 	sshbuf_free(buf);
 	sshbuf_free(arg);
 	return ret;

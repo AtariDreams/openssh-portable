@@ -682,23 +682,19 @@ pack_public_key_ed25519(const fido_cred_t *cred,
 
 	if ((len = fido_cred_pubkey_len(cred)) != 32) {
 		skdebug(__func__, "bad fido_cred_pubkey_len len %zu", len);
-		goto out;
+		return -1;
 	}
 	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
 		skdebug(__func__, "fido_cred_pubkey_ptr failed");
-		goto out;
+		return -1;
 	}
 	response->public_key_len = len;
 	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
 		skdebug(__func__, "malloc pubkey failed");
-		goto out;
+		return -1;
 	}
 	memcpy(response->public_key, ptr, len);
-	ret = 0;
- out:
-	if (ret != 0)
-		free(response->public_key);
-	return ret;
+	return 0;
 }
 
 static int
